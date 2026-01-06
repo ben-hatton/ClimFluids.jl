@@ -1,7 +1,7 @@
 name = "ClimFluids"
 uuid = "68475963-a72f-47d4-b871-9c5545ecd1c0"
 authors = ["The ClimFlows contributors"]
-version = "0.1.4"
+version = "0.1.5"
 
 [deps]
 MacroTools = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
