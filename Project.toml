@@ -18,7 +18,7 @@ ForwardDiff_Ext = ["ForwardDiff"]
 Test_Ext = ["ForwardDiff", "Test"]
 
 [compat]
-ForwardDiff = "0.10"
+ForwardDiff = "1"
 MacroTools = "0.5"
 MuladdMacro = "0.2"
 PackageExtensionCompat = "1"
