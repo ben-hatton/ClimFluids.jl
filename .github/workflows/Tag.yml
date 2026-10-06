@@ -8,5 +8,60 @@ permissions:
 
 jobs:
   tag:
-    uses: ClimFlows/.github/.github/workflows/auto-tag.yml@main
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Check if version from Project.toml is tagged
+        id: version
+        run: |
+          VERSION=$(julia -e 'using TOML; println(TOML.parsefile("Project.toml")["version"])')
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "Version $VERSION is already tagged, skipping."
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Version $VERSION is not tagged yet, proceeding."
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Configure git
+        if: steps.version.outputs.exists == 'false'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global credential.helper store
+
+      - name: Register package when REGISTRY_PAT is available
+        if: steps.version.outputs.exists == 'false'
+        env:
+          JULIA_GIT: /usr/bin/git
+          REGISTRY_PAT: ${{ secrets.REGISTRY_PAT }}
+          REGISTRY_PATH: /home/runner/.julia/registries/ClimFlowsRegistry
+        run: |
+          if [ -z "$REGISTRY_PAT" ]; then
+            echo "REGISTRY_PAT is not set; skipping registry registration."
+            exit 0
+          fi
+
+          echo "https://x-access-token:${REGISTRY_PAT}@github.com" > ~/.git-credentials
+          julia --project=@register -e '
+            using Pkg; Pkg.add("LocalRegistry")
+            using LocalRegistry
+            Pkg.Registry.add(RegistrySpec(url="https://github.com/ClimFlows/JuliaRegistry.git/"))
+            register(pwd() ; registry="ClimFlowsRegistry", push=false)
+          '
+          git -C "$REGISTRY_PATH" remote set-url origin "https://x-access-token:${REGISTRY_PAT}@github.com/ClimFlows/JuliaRegistry.git"
+          git -C "$REGISTRY_PATH" push origin master
+
+      - name: Push tag
+        if: steps.version.outputs.exists == 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "https://${{ github.actor }}:${GITHUB_TOKEN}@github.com" > ~/.git-credentials
+          git tag "v${{ steps.version.outputs.version }}"
+          git push origin "v${{ steps.version.outputs.version }}"
