@@ -5,7 +5,7 @@ using ClimFluids
 function test()
     params_gas = (kappa = 2 / 7, Cp = 1000, p0 = 1e5, T0 = 300, nu = 0.1)
     params_gas = (kappa0 = params_gas.kappa, Cp0 = params_gas.Cp, params_gas...)
-    params_water = (Cp = 4000, p0 = 1.1e5, T0 = 300, q0 = 35, v0 = 1e-3, α_p = 1e-9, α_T = 2e-4, α_q = 1e-3, α_TT = 1e-5, γ = 1e-8, μ0 = 0., M_s = 3.14038218e-2, R = 8.31446261815324)
+    params_water = (Cp0 = 4000, p0 = 1.1e5, T0 = 300, q0 = 35, v0 = 1e-3, α_p = 1e-9, α_T = 2e-4, α_q = 1e-3, α_TT = 1e-5, γ = 1e-8, μ0 = 0., M_s = 3.14038218e-2, R = 8.31446261815324)
 
     p, T, q = 1.e5, 295, 34
 

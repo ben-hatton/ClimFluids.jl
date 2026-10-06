@@ -1,6 +1,5 @@
 module ClimFluids
 using MuladdMacro
-using PolynomialRoots
 
 export AbstractFluid, IdealPerfectGas, CpVarPerfectGas, NonlinearBinaryFluid
 export temperature,
@@ -119,6 +118,32 @@ function sound_speed end
 Returns the squared speed of sound given a `fluid` and a `state` (named tuple of state variables).
 """
 function sound_speed2 end
+
+"""
+    Cp = heat_capacity(fluid, state)
+Returns the specific heat capacity at constant pressure, `T (∂s/∂T)_p`, given a `fluid` and a `state` (named tuple of state variables).
+"""
+function heat_capacity end
+
+"""
+    μ = modified_chemical_potential(fluid, state)
+Returns the chemical potential relative to the conservative variable, `(∂h/∂q)` at fixed pressure and conservative variable,
+given a binary `fluid` and a `state` (named tuple of state variables).
+"""
+function modified_chemical_potential end
+
+"""
+    dc = dcons_dq(fluid, state)
+Returns the derivative of the conservative variable with respect to composition at fixed pressure and temperature,
+given a binary `fluid` and a `state` (named tuple of state variables).
+"""
+function dcons_dq end
+
+"""
+    μ, ∂μ_∂p, ∂μ_∂T, ∂μ_∂q = chemical_potential_derivatives(fluid, state)
+Returns the chemical potential `μ(p, T, q)` and its partial derivatives, given a binary `fluid` and a `state` (named tuple of state variables).
+"""
+function chemical_potential_derivatives end
 
 """
     cstate = canonical_state(fluid, state)

@@ -1,13 +1,12 @@
 name = "ClimFluids"
 uuid = "68475963-a72f-47d4-b871-9c5545ecd1c0"
 authors = ["The ClimFlows contributors"]
-version = "0.1.5"
+version = "0.1.6"
 
 [deps]
 MacroTools = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
 MuladdMacro = "46d2c3a1-f734-5fdb-9937-b9b9aeba4221"
 PackageExtensionCompat = "65ce6f38-6b18-4e1d-a461-8949797d7930"
-PolynomialRoots = "3a141323-8675-5d76-9d11-e1df1406c778"
 
 [weakdeps]
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"

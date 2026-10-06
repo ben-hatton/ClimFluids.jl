@@ -58,8 +58,31 @@ const VConsQ = NamedTuple{(:v, :consvar, :q)}
         sound_speed
     )
 
+    binary_state_functions() = (;
+        temperature,
+        pressure,
+        conservative_variable,
+        conjugate_variable,
+        specific_volume,
+        specific_entropy,
+        specific_enthalpy,
+        specific_internal_energy,
+        potential_volume,
+        potential_enthalpy,
+        potential_temperature,
+        exner_functions,
+        volume_functions,
+        sound_speed2,
+        sound_speed,
+        heat_capacity,
+        modified_chemical_potential,
+        dcons_dq,
+        chemical_potential_derivatives
+    )
+
     # one could imagine to specialize this function to restrict the list
     state_functions(::AbstractFluid) = all_state_functions()
+    state_functions(::BinaryFluid) = binary_state_functions()
 
     function fallback(fun, fluid::AbstractFluid, state::NamedTuple)
         cstate = canonical_state(fluid, state)
@@ -88,6 +111,13 @@ for fun in propertynames(all_state_functions())
         @eval @inline function $fun(fluid::AbstractFluid, state::NamedTuple)
             return fallback($fun, fluid, state)
         end
+    end
+end
+
+# fallbacks for the state functions specific to binary fluids
+for fun in setdiff(propertynames(binary_state_functions()), propertynames(all_state_functions()))
+    @eval @inline function $fun(fluid::BinaryFluid, state::NamedTuple)
+        return fallback($fun, fluid, state)
     end
 end
 
